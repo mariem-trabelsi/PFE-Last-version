@@ -1,0 +1,36 @@
+version: '3'
+services:
+  backend:
+    image: 'backend'
+    ports:
+      - "5005:8080"
+    build:
+      context: .
+    container_name: backend
+    depends_on:
+      - bd
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://bd:5432/foodsafety
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+  bd:
+    image: 'postgres:13.1-alpine'
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - bd:/var/lib/postgresql/data/
+  front:
+    image: "foodsafetyfront"
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
+volumes:
+  bd:
+      
